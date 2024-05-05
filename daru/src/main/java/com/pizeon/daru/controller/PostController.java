@@ -1,5 +1,7 @@
 package com.pizeon.daru.controller;
 
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,15 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pizeon.daru.dto.cmmn.Criteria;
 import com.pizeon.daru.dto.cmmn.PageDTO;
 import com.pizeon.daru.dto.cmmn.ResultDTO;
-import com.pizeon.daru.dto.post.MyPostCriteriaDTO;
 import com.pizeon.daru.dto.post.PostCreateDTO;
 import com.pizeon.daru.dto.post.PostDetailDTO;
-import com.pizeon.daru.dto.post.PostListDTO;
-import com.pizeon.daru.dto.post.SubPostCriteriaDTO;
+import com.pizeon.daru.dto.post.list.MyPostListDTO;
+import com.pizeon.daru.dto.post.list.PostListDTO;
+import com.pizeon.daru.dto.post.list.SubPostListDTO;
 import com.pizeon.daru.service.PostService;
 import com.pizeon.daru.util.HttpSessionUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,16 +30,17 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 	
 	private final PostService postService;
+	private final HttpSessionUtil httpSessionUtil;
 	
 	@PostMapping("/list")
 	public ResultDTO<PageDTO<PostListDTO>> list(@RequestBody Criteria criteria) {
 		try {
-			PageDTO<PostListDTO> pageDTO = postService.list(criteria);
+			Optional<PageDTO<PostListDTO>> pageDTO = postService.list(criteria);
 			
-			if (pageDTO != null) {
+			if (!pageDTO.isEmpty()) {
 				return ResultDTO.<PageDTO<PostListDTO>>builder()
 						.success(true)
-						.data(pageDTO)
+						.data(pageDTO.get())
 						.build();
 			}
 		} catch (Exception e) {
@@ -49,15 +53,15 @@ public class PostController {
 	}
 	
 	@PostMapping("/my-list")
-	public ResultDTO<PageDTO<PostListDTO>> myList(HttpServletRequest request, @RequestBody MyPostCriteriaDTO myPostCriteriaDTO) {
+	public ResultDTO<PageDTO<PostListDTO>> myList(HttpServletRequest request, @RequestBody MyPostListDTO myPostListDTO) {
 		try {
-			if (HttpSessionUtil.isLoginedId(request.getSession(), myPostCriteriaDTO.getUserId())) {
-				PageDTO<PostListDTO> pageDTO = postService.myList(myPostCriteriaDTO);
+			if (httpSessionUtil.isLoginedId(request.getSession(), myPostListDTO.getUserId())) {
+				Optional<PageDTO<PostListDTO>> pageDTO = postService.myList(myPostListDTO);
 				
-				if (pageDTO != null) {
+				if (!pageDTO.isEmpty()) {
 					return ResultDTO.<PageDTO<PostListDTO>>builder()
 							.success(true)
-							.data(pageDTO)
+							.data(pageDTO.get())
 							.build();
 				}
 			}
@@ -71,15 +75,15 @@ public class PostController {
 	}
 	
 	@PostMapping("/sub/list")
-	public ResultDTO<PageDTO<PostListDTO>> subList(HttpServletRequest request, @RequestBody SubPostCriteriaDTO subPostCriteriaDTO) {
+	public ResultDTO<PageDTO<PostListDTO>> subList(HttpServletRequest request, @RequestBody SubPostListDTO subPostListDTO) {
 		try {
-			if (HttpSessionUtil.isLoginedId(request.getSession(), subPostCriteriaDTO.getUserId())) {
-				PageDTO<PostListDTO> pageDTO = postService.submittedList(subPostCriteriaDTO);
+			if (httpSessionUtil.isLoginedId(request.getSession(), subPostListDTO.getUserId())) {
+				Optional<PageDTO<PostListDTO>> pageDTO = postService.submittedList(subPostListDTO);
 				
-				if (pageDTO != null) {
+				if (!pageDTO.isEmpty()) {
 					return ResultDTO.<PageDTO<PostListDTO>>builder()
 							.success(true)
-							.data(pageDTO)
+							.data(pageDTO.get())
 							.build();
 				}
 			}
@@ -94,13 +98,17 @@ public class PostController {
 	
 	@GetMapping("/{postId}/detail")
 	public ResultDTO<PostDetailDTO> detail(@PathVariable("postId") Long postId) {
-		PostDetailDTO postDetailDTO = postService.detail(postId);
-		
-		if (postDetailDTO != null) {
-			return ResultDTO.<PostDetailDTO>builder()
-					.success(true)
-					.data(postDetailDTO)
-					.build();
+		try {
+			Optional<PostDetailDTO> postDetailDTO = postService.detail(postId);
+			
+			if (postDetailDTO != null) {
+				return ResultDTO.<PostDetailDTO>builder()
+						.success(true)
+						.data(postDetailDTO.get())
+						.build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return ResultDTO.<PostDetailDTO>builder()
 				.success(false)
@@ -109,18 +117,22 @@ public class PostController {
 	}
 	
 	@PostMapping("/create")
-	public ResultDTO<Long> create(HttpServletRequest request, @RequestBody PostCreateDTO postCreateDTO) {
-		Long writerId = postCreateDTO.getWriterId();
-		
-		if (HttpSessionUtil.isLoginedId(request.getSession(), writerId)) {
-			Long postId = postService.create(postCreateDTO);
+	public ResultDTO<Long> create(HttpServletRequest request, @Valid @RequestBody PostCreateDTO postCreateDTO) {
+		try {
+			Long writerId = postCreateDTO.getWriterId();
 			
-			if (postId != null) {
-				return ResultDTO.<Long>builder()
-						.success(true)
-						.data(postId)
-						.build();
+			if (httpSessionUtil.isLoginedId(request.getSession(), writerId)) {
+				Optional<Long> postId = postService.create(postCreateDTO);
+				
+				if (!postId.isEmpty()) {
+					return ResultDTO.<Long>builder()
+							.success(true)
+							.data(postId.get())
+							.build();
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return ResultDTO.<Long>builder()
 				.success(false)

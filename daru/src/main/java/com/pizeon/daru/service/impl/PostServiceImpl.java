@@ -1,5 +1,8 @@
 package com.pizeon.daru.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,11 +14,11 @@ import com.pizeon.daru.domain.SubDoc;
 import com.pizeon.daru.domain.User;
 import com.pizeon.daru.dto.cmmn.Criteria;
 import com.pizeon.daru.dto.cmmn.PageDTO;
-import com.pizeon.daru.dto.post.MyPostCriteriaDTO;
 import com.pizeon.daru.dto.post.PostCreateDTO;
 import com.pizeon.daru.dto.post.PostDetailDTO;
-import com.pizeon.daru.dto.post.PostListDTO;
-import com.pizeon.daru.dto.post.SubPostCriteriaDTO;
+import com.pizeon.daru.dto.post.list.MyPostListDTO;
+import com.pizeon.daru.dto.post.list.PostListDTO;
+import com.pizeon.daru.dto.post.list.SubPostListDTO;
 import com.pizeon.daru.dto.reqDocInfo.ReqDocInfoCreateDTO;
 import com.pizeon.daru.repository.PostRepository;
 import com.pizeon.daru.repository.ReqDocInfoRepository;
@@ -35,78 +38,67 @@ public class PostServiceImpl implements PostService {
 	private final SubDocRepository subDocRepository;
 			
 	@Override
-	public PageDTO<PostListDTO> list(Criteria criteria) {
-		try {
-			Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
-			Page<Post> page =
-					postRepository.findByTitleContainsOrderByCreatedAtDesc(criteria.getKeyword(), pageable);
-			
-			return PageDTO.<PostListDTO>builder()
-					.totalPage(page.getTotalPages())
-					.pageNum(page.getPageable().getPageNumber() + 1)
-					.keyword(criteria.getKeyword())
-					.content(page.get().map(post -> PostListDTO.fromEntity(post)).toList())
-					.build();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Optional<PageDTO<PostListDTO>> list(Criteria criteria) throws Exception {
+		Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
+		Page<Post> page =
+				postRepository.findByTitleContainsOrderByCreatedAtDesc(criteria.getKeyword(), pageable);
+		
+		return Optional.of(
+				PageDTO.<PostListDTO>builder()
+				.totalPage(page.getTotalPages())
+				.pageNum(page.getPageable().getPageNumber() + 1)
+				.keyword(criteria.getKeyword())
+				.content(page.get().map(post -> PostListDTO.fromEntity(post)).toList())
+				.build());
 	}
 	
 	@Override
-	public PageDTO<PostListDTO> myList(MyPostCriteriaDTO myPostCriteriaDTO) {
-		try {
-			Long userId = myPostCriteriaDTO.getUserId();
-			Criteria criteria = myPostCriteriaDTO.getCriteria();
-			
-			User writer = userRepository.findById(userId).get();
-			Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
-			Page<Post> page =
-					postRepository.findByTitleContainsAndWriterOrderByCreatedAtDesc(criteria.getKeyword(), writer, pageable);
-			
-			return PageDTO.<PostListDTO>builder()
-					.totalPage(page.getTotalPages())
-					.pageNum(page.getPageable().getPageNumber() + 1)
-					.content(page.get().map(post -> PostListDTO.fromEntity(post)).toList())
-					.build();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Optional<PageDTO<PostListDTO>> myList(MyPostListDTO myPostListDTO) throws Exception {
+		Long userId = myPostListDTO.getUserId();
+		Criteria criteria = myPostListDTO.getCriteria();
+		
+		User writer = userRepository.findById(userId).get();
+		Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
+		Page<Post> page =
+				postRepository.findByTitleContainsAndWriterOrderByCreatedAtDesc(criteria.getKeyword(), writer, pageable);
+		
+		return Optional.of(
+				PageDTO.<PostListDTO>builder()
+				.totalPage(page.getTotalPages())
+				.pageNum(page.getPageable().getPageNumber() + 1)
+				.content(page.get().map(post -> PostListDTO.fromEntity(post)).toList())
+				.build());
 	}
 	
 	@Override
-	public PageDTO<PostListDTO> submittedList(SubPostCriteriaDTO subPostCriteriaDTO) {
-		try {
-			Long userId = subPostCriteriaDTO.getUserId();
-			Criteria criteria = subPostCriteriaDTO.getCriteria();
-			
-			User writer = userRepository.findById(userId).get();
-			Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
-			Page<SubDoc> page = subDocRepository.findByUser(writer, pageable);
-			
-			return PageDTO.<PostListDTO>builder()
-					.totalPage(page.getTotalPages())
-					.pageNum(page.getPageable().getPageNumber() + 1)
-					.content(page.get().map(subDoc -> PostListDTO.fromEntity(subDoc.getPost())).toList())
-					.build();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Optional<PageDTO<PostListDTO>> submittedList(SubPostListDTO subPostListDTO) {
+		Long userId = subPostListDTO.getUserId();
+		Criteria criteria = subPostListDTO.getCriteria();
+		
+		User writer = userRepository.findById(userId).get();
+		Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
+		Page<SubDoc> page = subDocRepository.findByUser(writer, pageable);
+		
+		return Optional.of(
+				PageDTO.<PostListDTO>builder()
+				.totalPage(page.getTotalPages())
+				.pageNum(page.getPageable().getPageNumber() + 1)
+				.content(page.get().map(subDoc -> PostListDTO.fromEntity(subDoc.getPost())).toList())
+				.build());
 	}
 	
 	@Override
-	public PostDetailDTO detail(Long postId) {
-		return PostDetailDTO.fromEntity(postRepository.findById(postId).get());
+	public Optional<PostDetailDTO> detail(Long postId) {
+		return Optional.of(PostDetailDTO.fromEntity(postRepository.findById(postId).get()));
 	}
 
 	@Override
-	public Long create(PostCreateDTO postCreateDTO) {
+	public Optional<Long> create(PostCreateDTO postCreateDTO) {
 		User writer = userRepository.findById(postCreateDTO.getWriterId()).get();
 		
 		if (writer != null) {
-			Post post = postRepository.save(Post.fromCreateDTO(postCreateDTO, writer));
+			LocalDateTime now = LocalDateTime.now();
+			Post post = postRepository.save(Post.fromCreateDTO(postCreateDTO, writer, now));
 			
 			if (post != null) {
 				for (ReqDocInfoCreateDTO reqDocInfoCreateDTO : postCreateDTO.getReqDocInfoList()) {
@@ -118,10 +110,10 @@ public class PostServiceImpl implements PostService {
 						return null;
 					}
 				}
-				return post.getId();
+				return Optional.of(post.getId());
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 }

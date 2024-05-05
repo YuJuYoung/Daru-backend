@@ -20,7 +20,7 @@ public class ReqDocServiceImpl implements ReqDocService {
 	private final ReqDocInfoRepository reqDocInfoRepository;
 
 	@Override
-	public List<ReqDocInfoListDTO> infoList(Long postId) {
+	public List<ReqDocInfoListDTO> infoList(Long postId) throws Exception {
 		Post post = postRepository.findById(postId).get();
 		
 		return reqDocInfoRepository.findByPost(post).stream()

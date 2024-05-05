@@ -1,22 +1,25 @@
 package com.pizeon.daru.util;
 
+import org.springframework.context.annotation.Configuration;
+
 import jakarta.servlet.http.HttpSession;
 
+@Configuration
 public class HttpSessionUtil {
 	
-	public static Long getLoginedId(HttpSession session) {
+	public Long getLoginedId(HttpSession session) throws Exception {
 		return (Long) session.getAttribute("loginedId");
 	}
 	
-	public static void setLoginedId(HttpSession session, Long userId) {
+	public void setLoginedId(HttpSession session, Long userId) throws Exception {
 		session.setAttribute("loginedId", userId);
 	}
 	
-	public static void removeLoginedId(HttpSession session) {
+	public void removeLoginedId(HttpSession session) throws Exception {
 		session.removeAttribute("loginedId");
 	}
 	
-	public static boolean isLoginedId(HttpSession session, Long userId) {
+	public boolean isLoginedId(HttpSession session, Long userId) throws Exception {
 		Long loginedId = (Long) session.getAttribute("loginedId");
 		
 		if (loginedId != null) {

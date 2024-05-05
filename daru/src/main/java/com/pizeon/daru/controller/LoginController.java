@@ -22,18 +22,23 @@ import lombok.RequiredArgsConstructor;
 public class LoginController {
 	
 	private final LoginService loginService;
+	private final HttpSessionUtil httpSessionUtil;
 	
 	@PostMapping("")
 	public ResultDTO<Long> login(HttpServletRequest request, @RequestBody LoginDTO loginDTO) {
-		Optional<Long> foundUserId = loginService.findUserByLoginInfo(loginDTO);
-		
-		if (!foundUserId.isEmpty()) {
-			HttpSessionUtil.setLoginedId(request.getSession(), foundUserId.get());
+		try {
+			Optional<Long> foundUserId = loginService.findUserByLoginInfo(loginDTO);
 			
-			return ResultDTO.<Long>builder()
-					.success(true)
-					.data(foundUserId.get())
-					.build();
+			if (!foundUserId.isEmpty()) {
+				httpSessionUtil.setLoginedId(request.getSession(), foundUserId.get());
+				
+				return ResultDTO.<Long>builder()
+						.success(true)
+						.data(foundUserId.get())
+						.build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return ResultDTO.<Long>builder()
 				.success(false)
@@ -43,16 +48,19 @@ public class LoginController {
 	
 	@PostMapping("/logout")
 	public ResultDTO<?> logout(HttpServletRequest request, @RequestBody String loginedId) {
-		HttpSession session = request.getSession();
-		
-		if (HttpSessionUtil.isLoginedId(session, Long.parseLong(loginedId))) {
-			HttpSessionUtil.removeLoginedId(session);
+		try {
+			HttpSession session = request.getSession();
 			
-			return ResultDTO.builder()
-					.success(true)
-					.build();
+			if (httpSessionUtil.isLoginedId(session, Long.parseLong(loginedId))) {
+				httpSessionUtil.removeLoginedId(session);
+				
+				return ResultDTO.builder()
+						.success(true)
+						.build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
 		return ResultDTO.builder()
 				.success(false)
 				.message("로그아웃에 실패했습니다.")

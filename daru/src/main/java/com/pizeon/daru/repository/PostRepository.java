@@ -11,16 +11,16 @@ import com.pizeon.daru.domain.User;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 	
-	@Query("SELECT e "
-			+ "FROM Post e "
-			+ "WHERE (:title IS NULL OR :title = '' OR e.title LIKE %:title%) "
-			+ "ORDER BY createdAt DESC")
+	@Query("SELECT e " +
+		   "FROM Post e " +
+		   "WHERE (:title IS NULL OR :title = '' OR e.title LIKE %:title%) " +
+		   "ORDER BY createdAt DESC")
 	public Page<Post> findByTitleContainsOrderByCreatedAtDesc(@Param("title") String keyword, Pageable pageable);
 	
-	@Query("SELECT e "
-			+ "FROM Post e "
-			+ "WHERE e.writer = :writer AND (:title IS NULL OR :title = '' OR e.title LIKE %:title%) "
-			+ "ORDER BY createdAt DESC")
+	@Query("SELECT e "+
+		   "FROM Post e " +
+		   "WHERE e.writer = :writer AND (:title IS NULL OR :title = '' OR e.title LIKE %:title%) " +
+		   "ORDER BY createdAt DESC")
 	public Page<Post> findByTitleContainsAndWriterOrderByCreatedAtDesc(@Param("title") String keyword, @Param("writer") User writer, Pageable pageable);
 
 }

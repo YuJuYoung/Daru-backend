@@ -44,13 +44,12 @@ public class Post {
 	@JoinColumn(name = "writer_id")
 	private User writer;
 	
-	public static Post fromCreateDTO(PostCreateDTO postCreateDTO, User writer) {
+	public static Post fromCreateDTO(PostCreateDTO postCreateDTO, User writer, LocalDateTime now) {
 		return builder()
-				.id(postCreateDTO.getId())
 				.title(postCreateDTO.getTitle())
 				.description(postCreateDTO.getDescription())
-				.createdAt(postCreateDTO.getCreatedAt())
-				.updatedAt(postCreateDTO.getUpdatedAt())
+				.createdAt(now)
+				.updatedAt(now)
 				.writer(writer)
 				.build();
 	}

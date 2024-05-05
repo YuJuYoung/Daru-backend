@@ -4,7 +4,7 @@ import com.pizeon.daru.dto.UserDTO;
 
 public interface UserService {
 	
-	public UserDTO create(UserDTO userDTO);
-	public boolean isRegisteredUser(UserDTO userDTO);
+	public UserDTO create(UserDTO userDTO) throws Exception;
+	public boolean isRegisteredUser(UserDTO userDTO) throws Exception;
 	
 }

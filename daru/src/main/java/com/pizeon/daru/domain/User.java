@@ -9,11 +9,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User {
@@ -35,7 +37,12 @@ public class User {
 	private String name;
 	
 	public static User fromDTO(UserDTO userDTO) {
-		return new User(userDTO.getId(), userDTO.getEmail(), userDTO.getPassword(), userDTO.getPhoneNumber(), userDTO.getName());
+		return builder()
+				.email(userDTO.getEmail())
+				.password(userDTO.getPassword())
+				.phoneNumber(userDTO.getPhoneNumber())
+				.name(userDTO.getName())
+				.build();
 	}
 	
 }

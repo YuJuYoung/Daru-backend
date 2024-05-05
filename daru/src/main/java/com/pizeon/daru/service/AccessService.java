@@ -4,6 +4,6 @@ import com.pizeon.daru.domain.SubDoc;
 
 public interface AccessService {
 	
-	public boolean checkSubDocAccessPermission(SubDoc subDoc, Long accessId);
+	public boolean checkSubDocAccessPermission(SubDoc subDoc, Long accessId) throws Exception;
 
 }

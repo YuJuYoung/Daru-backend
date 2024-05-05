@@ -47,12 +47,12 @@ public class SubDoc {
 	@OneToMany(mappedBy = "subDoc")
 	private List<SubDocInfo> subDocInfoList;
 	
-	public static SubDoc fromCreateDTO(SubDocCreateDTO subDocCreateDTO, Post post, User user) {
+	public static SubDoc fromCreateDTO(SubDocCreateDTO subDocCreateDTO, Post post, User user, LocalDateTime now) {
 		return builder()
 				.post(post)
 				.user(user)
-				.createdAt(subDocCreateDTO.getCreatedAt())
-				.updatedAt(subDocCreateDTO.getUpdatedAt())
+				.createdAt(now)
+				.updatedAt(now)
 				.build();
 	}
 

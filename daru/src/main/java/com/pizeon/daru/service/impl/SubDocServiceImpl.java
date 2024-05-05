@@ -1,6 +1,8 @@
 package com.pizeon.daru.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,12 +42,13 @@ public class SubDocServiceImpl implements SubDocService {
 	private final SubDocInfoRepository subDocInfoRepository;
 
 	@Override
-	public boolean create(SubDocCreateDTO subDocCreateDTO) {
+	public boolean create(SubDocCreateDTO subDocCreateDTO) throws Exception {
 		Post post = postRepository.findById(subDocCreateDTO.getPostId()).get();
 		User user = userRepository.findById(subDocCreateDTO.getUserId()).get();
 		
 		if (post != null && user != null) {
-			SubDoc subDoc = subDocRepository.save(SubDoc.fromCreateDTO(subDocCreateDTO, post, user));
+			LocalDateTime now = LocalDateTime.now();
+			SubDoc subDoc = subDocRepository.save(SubDoc.fromCreateDTO(subDocCreateDTO, post, user, now));
 			
 			if (subDoc != null) {
 				for (SubDocInfoCreateDTO subDocInfoCreateDTO : subDocCreateDTO.getSubDocInfoList()) {
@@ -64,39 +67,32 @@ public class SubDocServiceImpl implements SubDocService {
 	}
 
 	@Override
-	public PageDTO<SubDocListResDTO> list(SubDocListReqDTO subDocListReqDTO) {
-		try {
-			Post post = postRepository.findById(subDocListReqDTO.getSubDocCriteria().getPostId()).get();
-			Criteria criteria = subDocListReqDTO.getSubDocCriteria().getCriteria();
-			
-			Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
-			Page<SubDoc> page = subDocRepository.findByPost(post, pageable);
-			
-			return PageDTO.<SubDocListResDTO>builder()
-					.totalPage(page.getTotalPages())
-					.pageNum(page.getPageable().getPageNumber() + 1)
-					.content(page.get().map(subDoc -> SubDocListResDTO.fromEntity(subDoc)).toList())
-					.build();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Optional<PageDTO<SubDocListResDTO>> list(SubDocListReqDTO subDocListReqDTO) throws Exception {
+		Post post = postRepository.findById(subDocListReqDTO.getPostId()).get();
+		Criteria criteria = subDocListReqDTO.getCriteria();
+		
+		Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
+		Page<SubDoc> page = subDocRepository.findByPost(post, pageable);
+		
+		return Optional.of(
+				PageDTO.<SubDocListResDTO>builder()
+				.totalPage(page.getTotalPages())
+				.pageNum(page.getPageable().getPageNumber() + 1)
+				.content(page.get().map(subDoc -> SubDocListResDTO.fromEntity(subDoc)).toList())
+				.build());
 	}
 
 	@Override
-	public List<SubDocInfoListResDTO> infoList(SubDocInfoListReqDTO subDocInfoListReqDTO) {
-		try {
-			SubDoc subDoc = subDocRepository.findById(subDocInfoListReqDTO.getSubDocId()).get();
-			
-			if (accessService.checkSubDocAccessPermission(subDoc, subDocInfoListReqDTO.getLoginedId())) {
-				return subDoc.getSubDocInfoList().stream()
-						.map(subDocInfo -> SubDocInfoListResDTO.fromEntity(subDocInfo))
-						.toList();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public Optional<List<SubDocInfoListResDTO>> infoList(SubDocInfoListReqDTO subDocInfoListReqDTO) throws Exception {
+		SubDoc subDoc = subDocRepository.findById(subDocInfoListReqDTO.getSubDocId()).get();
+		
+		if (accessService.checkSubDocAccessPermission(subDoc, subDocInfoListReqDTO.getLoginedId())) {
+			return Optional.of(
+					subDoc.getSubDocInfoList().stream()
+					.map(subDocInfo -> SubDocInfoListResDTO.fromEntity(subDocInfo))
+					.toList());
 		}
-		return null;
+		return Optional.empty();
 	}
 
 }

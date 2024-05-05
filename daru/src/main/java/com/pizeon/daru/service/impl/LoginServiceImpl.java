@@ -3,6 +3,7 @@ package com.pizeon.daru.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pizeon.daru.domain.User;
@@ -17,15 +18,16 @@ import lombok.RequiredArgsConstructor;
 public class LoginServiceImpl implements LoginService {
 	
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
-	public Optional<Long> findUserByLoginInfo(LoginDTO loginDTO) {
+	public Optional<Long> findUserByLoginInfo(LoginDTO loginDTO) throws Exception {
 		List<User> foundUserList = userRepository.findByEmail(loginDTO.getEmail());
 		
 		if (!foundUserList.isEmpty()) {
 			User foundUser = foundUserList.get(0);
 			
-			if (foundUser.getPassword().equals(loginDTO.getPassword())) {
+			if (passwordEncoder.matches(loginDTO.getPassword(), foundUser.getPassword())) {
 				return Optional.of(foundUser.getId());
 			}
 		}

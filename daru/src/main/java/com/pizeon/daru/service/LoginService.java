@@ -6,6 +6,6 @@ import com.pizeon.daru.dto.LoginDTO;
 
 public interface LoginService {
 	
-	public Optional<Long> findUserByLoginInfo(LoginDTO loginDTO);
+	public Optional<Long> findUserByLoginInfo(LoginDTO loginDTO) throws Exception;
 
 }

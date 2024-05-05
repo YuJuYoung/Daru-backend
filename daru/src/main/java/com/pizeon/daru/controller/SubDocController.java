@@ -1,6 +1,7 @@
 package com.pizeon.daru.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import com.pizeon.daru.service.SubDocService;
 import com.pizeon.daru.util.HttpSessionUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,17 +28,22 @@ import lombok.RequiredArgsConstructor;
 public class SubDocController {
 	
 	private final SubDocService subDocService;
+	private final HttpSessionUtil httpSessionUtil;
 	
 	@PostMapping("/create")
-	public ResultDTO<?> create(HttpServletRequest request, @RequestBody SubDocCreateDTO subDocCreateDTO) {
-		if (HttpSessionUtil.isLoginedId(request.getSession(), subDocCreateDTO.getUserId())) {
-			boolean createResult = subDocService.create(subDocCreateDTO);
-			
-			if (createResult) {
-				return ResultDTO.builder()
-						.success(true)
-						.build();
+	public ResultDTO<?> create(HttpServletRequest request, @Valid @RequestBody SubDocCreateDTO subDocCreateDTO) {
+		try {
+			if (httpSessionUtil.isLoginedId(request.getSession(), subDocCreateDTO.getUserId())) {
+				boolean createResult = subDocService.create(subDocCreateDTO);
+				
+				if (createResult) {
+					return ResultDTO.builder()
+							.success(true)
+							.build();
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return ResultDTO.builder()
 				.success(false)
@@ -49,13 +56,13 @@ public class SubDocController {
 	@PostMapping("/list")
 	public ResultDTO<PageDTO<SubDocListResDTO>> list(HttpServletRequest request, @RequestBody SubDocListReqDTO subDocListReqDTO) {
 		try {
-			if (HttpSessionUtil.isLoginedId(request.getSession(), subDocListReqDTO.getPostWriterId())) {
-				PageDTO<SubDocListResDTO> pageDTO = subDocService.list(subDocListReqDTO);
+			if (httpSessionUtil.isLoginedId(request.getSession(), subDocListReqDTO.getPostWriterId())) {
+				Optional<PageDTO<SubDocListResDTO>> pageDTO = subDocService.list(subDocListReqDTO);
 				
-				if (pageDTO != null) {
+				if (!pageDTO.isEmpty()) {
 					return ResultDTO.<PageDTO<SubDocListResDTO>>builder()
 							.success(true)
-							.data(pageDTO)
+							.data(pageDTO.get())
 							.build();
 				}
 			}
@@ -71,10 +78,10 @@ public class SubDocController {
 	@PostMapping("/info/list")
 	public ResultDTO<List<SubDocInfoListResDTO>> infoList(HttpServletRequest request, @RequestBody SubDocInfoListReqDTO subDocInfoListReqDTO) {
 		try {
-			if (HttpSessionUtil.isLoginedId(request.getSession(), subDocInfoListReqDTO.getLoginedId())) {
+			if (httpSessionUtil.isLoginedId(request.getSession(), subDocInfoListReqDTO.getLoginedId())) {
 				return ResultDTO.<List<SubDocInfoListResDTO>>builder()
 						.success(true)
-						.data(subDocService.infoList(subDocInfoListReqDTO))
+						.data(subDocService.infoList(subDocInfoListReqDTO).get())
 						.build();
 			}
 		} catch (Exception e) {

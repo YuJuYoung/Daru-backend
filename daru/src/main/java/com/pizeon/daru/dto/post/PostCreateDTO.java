@@ -1,10 +1,11 @@
 package com.pizeon.daru.dto.post;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.pizeon.daru.dto.reqDocInfo.ReqDocInfoCreateDTO;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,12 +16,15 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostCreateDTO {
 	
-	private Long id;
+	@NotBlank
 	private String title;
+	
+	@NotBlank
 	private String description;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+	
 	private Long writerId;
+	
+	@Valid
 	private List<ReqDocInfoCreateDTO> reqDocInfoList;
 
 }

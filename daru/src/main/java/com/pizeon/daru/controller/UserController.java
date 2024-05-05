@@ -8,6 +8,7 @@ import com.pizeon.daru.dto.UserDTO;
 import com.pizeon.daru.dto.cmmn.ResultDTO;
 import com.pizeon.daru.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,18 +19,22 @@ public class UserController {
 	private final UserService userService;
 	
 	@PostMapping("/create")
-	public ResultDTO<?> create(@RequestBody UserDTO userDTO) {
-		if (userService.isRegisteredUser(userDTO)) {
-			return ResultDTO.builder()
-					.success(false)
-					.message("이미 존재하는 회원정보입니다.")
-					.build();
-		}
-		
-		if (userService.create(userDTO) != null) {
-			return ResultDTO.builder()
-					.success(true)
-					.build();
+	public ResultDTO<?> create(@Valid @RequestBody UserDTO userDTO) {
+		try {
+			if (userService.isRegisteredUser(userDTO)) {
+				return ResultDTO.builder()
+						.success(false)
+						.message("이미 존재하는 회원정보입니다.")
+						.build();
+			}
+			
+			if (userService.create(userDTO) != null) {
+				return ResultDTO.builder()
+						.success(true)
+						.build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return ResultDTO.builder()
 				 .success(false)
