@@ -14,14 +14,14 @@ import lombok.Setter;
 @Setter
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PostListDTO {
+public class PostListResDTO {
 	
 	private Long id;
 	private String title;
 	private String writerName;
 	private String createdAt;
 	
-	public static PostListDTO fromEntity(Post post) {
+	public static PostListResDTO fromEntity(Post post) {
 		return builder()
 				.id(post.getId())
 				.title(post.getTitle())

@@ -1,10 +1,10 @@
 package com.pizeon.daru.service;
 
-import com.pizeon.daru.dto.UserDTO;
+import com.pizeon.daru.dto.user.UserCreateDTO;
 
 public interface UserService {
 	
-	public UserDTO create(UserDTO userDTO) throws Exception;
-	public boolean isRegisteredUser(UserDTO userDTO) throws Exception;
+	public UserCreateDTO create(UserCreateDTO userCreateDTO) throws Exception;
+	public boolean isRegisteredUser(UserCreateDTO userCreateDTO) throws Exception;
 	
 }

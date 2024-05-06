@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pizeon.daru.dto.UserDTO;
 import com.pizeon.daru.dto.cmmn.ResultDTO;
+import com.pizeon.daru.dto.user.UserCreateDTO;
 import com.pizeon.daru.service.UserService;
 
 import jakarta.validation.Valid;
@@ -19,16 +19,16 @@ public class UserController {
 	private final UserService userService;
 	
 	@PostMapping("/create")
-	public ResultDTO<?> create(@Valid @RequestBody UserDTO userDTO) {
+	public ResultDTO<?> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 		try {
-			if (userService.isRegisteredUser(userDTO)) {
+			if (userService.isRegisteredUser(userCreateDTO)) {
 				return ResultDTO.builder()
 						.success(false)
 						.message("이미 존재하는 회원정보입니다.")
 						.build();
 			}
 			
-			if (userService.create(userDTO) != null) {
+			if (userService.create(userCreateDTO) != null) {
 				return ResultDTO.builder()
 						.success(true)
 						.build();

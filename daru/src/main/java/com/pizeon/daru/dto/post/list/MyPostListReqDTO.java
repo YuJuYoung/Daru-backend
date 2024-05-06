@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SubPostListDTO {
+public class MyPostListReqDTO {
 	
 	private Long userId;
 	private Criteria criteria;

@@ -13,10 +13,10 @@ import com.pizeon.daru.dto.cmmn.Criteria;
 import com.pizeon.daru.dto.cmmn.PageDTO;
 import com.pizeon.daru.dto.cmmn.ResultDTO;
 import com.pizeon.daru.dto.post.PostCreateDTO;
-import com.pizeon.daru.dto.post.PostDetailDTO;
-import com.pizeon.daru.dto.post.list.MyPostListDTO;
-import com.pizeon.daru.dto.post.list.PostListDTO;
-import com.pizeon.daru.dto.post.list.SubPostListDTO;
+import com.pizeon.daru.dto.post.PostDetailResDTO;
+import com.pizeon.daru.dto.post.list.MyPostListReqDTO;
+import com.pizeon.daru.dto.post.list.PostListResDTO;
+import com.pizeon.daru.dto.post.list.SubPostListReqDTO;
 import com.pizeon.daru.service.PostService;
 import com.pizeon.daru.util.HttpSessionUtil;
 
@@ -33,12 +33,12 @@ public class PostController {
 	private final HttpSessionUtil httpSessionUtil;
 	
 	@PostMapping("/list")
-	public ResultDTO<PageDTO<PostListDTO>> list(@RequestBody Criteria criteria) {
+	public ResultDTO<PageDTO<PostListResDTO>> list(@RequestBody Criteria criteria) {
 		try {
-			Optional<PageDTO<PostListDTO>> pageDTO = postService.list(criteria);
+			Optional<PageDTO<PostListResDTO>> pageDTO = postService.list(criteria);
 			
 			if (!pageDTO.isEmpty()) {
-				return ResultDTO.<PageDTO<PostListDTO>>builder()
+				return ResultDTO.<PageDTO<PostListResDTO>>builder()
 						.success(true)
 						.data(pageDTO.get())
 						.build();
@@ -46,20 +46,20 @@ public class PostController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return ResultDTO.<PageDTO<PostListDTO>>builder()
+		return ResultDTO.<PageDTO<PostListResDTO>>builder()
 				.success(false)
 				.message("글 목록 불러오기에 실패했습니다.")
 				.build();
 	}
 	
 	@PostMapping("/my-list")
-	public ResultDTO<PageDTO<PostListDTO>> myList(HttpServletRequest request, @RequestBody MyPostListDTO myPostListDTO) {
+	public ResultDTO<PageDTO<PostListResDTO>> myList(HttpServletRequest request, @RequestBody MyPostListReqDTO myPostListReqDTO) {
 		try {
-			if (httpSessionUtil.isLoginedId(request.getSession(), myPostListDTO.getUserId())) {
-				Optional<PageDTO<PostListDTO>> pageDTO = postService.myList(myPostListDTO);
+			if (httpSessionUtil.isLoginedId(request.getSession(), myPostListReqDTO.getUserId())) {
+				Optional<PageDTO<PostListResDTO>> pageDTO = postService.myList(myPostListReqDTO);
 				
 				if (!pageDTO.isEmpty()) {
-					return ResultDTO.<PageDTO<PostListDTO>>builder()
+					return ResultDTO.<PageDTO<PostListResDTO>>builder()
 							.success(true)
 							.data(pageDTO.get())
 							.build();
@@ -68,20 +68,20 @@ public class PostController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return ResultDTO.<PageDTO<PostListDTO>>builder()
+		return ResultDTO.<PageDTO<PostListResDTO>>builder()
 				.success(false)
 				.message("글 목록 불러오기에 실패했습니다.")
 				.build();
 	}
 	
 	@PostMapping("/sub/list")
-	public ResultDTO<PageDTO<PostListDTO>> subList(HttpServletRequest request, @RequestBody SubPostListDTO subPostListDTO) {
+	public ResultDTO<PageDTO<PostListResDTO>> subList(HttpServletRequest request, @RequestBody SubPostListReqDTO subPostListReqDTO) {
 		try {
-			if (httpSessionUtil.isLoginedId(request.getSession(), subPostListDTO.getUserId())) {
-				Optional<PageDTO<PostListDTO>> pageDTO = postService.submittedList(subPostListDTO);
+			if (httpSessionUtil.isLoginedId(request.getSession(), subPostListReqDTO.getUserId())) {
+				Optional<PageDTO<PostListResDTO>> pageDTO = postService.submittedList(subPostListReqDTO);
 				
 				if (!pageDTO.isEmpty()) {
-					return ResultDTO.<PageDTO<PostListDTO>>builder()
+					return ResultDTO.<PageDTO<PostListResDTO>>builder()
 							.success(true)
 							.data(pageDTO.get())
 							.build();
@@ -90,27 +90,27 @@ public class PostController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return ResultDTO.<PageDTO<PostListDTO>>builder()
+		return ResultDTO.<PageDTO<PostListResDTO>>builder()
 				.success(false)
 				.message("글 목록 불러오기에 실패했습니다.")
 				.build();
 	}
 	
 	@GetMapping("/{postId}/detail")
-	public ResultDTO<PostDetailDTO> detail(@PathVariable("postId") Long postId) {
+	public ResultDTO<PostDetailResDTO> detail(@PathVariable("postId") Long postId) {
 		try {
-			Optional<PostDetailDTO> postDetailDTO = postService.detail(postId);
+			Optional<PostDetailResDTO> postDetailResDTO = postService.detail(postId);
 			
-			if (!postDetailDTO.isEmpty()) {
-				return ResultDTO.<PostDetailDTO>builder()
+			if (!postDetailResDTO.isEmpty()) {
+				return ResultDTO.<PostDetailResDTO>builder()
 						.success(true)
-						.data(postDetailDTO.get())
+						.data(postDetailResDTO.get())
 						.build();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return ResultDTO.<PostDetailDTO>builder()
+		return ResultDTO.<PostDetailResDTO>builder()
 				.success(false)
 				.message("글 불러오기에 실패했습니다.")
 				.build();

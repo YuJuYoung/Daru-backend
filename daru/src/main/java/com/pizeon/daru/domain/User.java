@@ -1,6 +1,6 @@
 package com.pizeon.daru.domain;
 
-import com.pizeon.daru.dto.UserDTO;
+import com.pizeon.daru.dto.user.UserCreateDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,12 +36,12 @@ public class User {
 	@Column(nullable = false)
 	private String name;
 	
-	public static User fromDTO(UserDTO userDTO) {
+	public static User fromDTO(UserCreateDTO userCreateDTO) {
 		return builder()
-				.email(userDTO.getEmail())
-				.password(userDTO.getPassword())
-				.phoneNumber(userDTO.getPhoneNumber())
-				.name(userDTO.getName())
+				.email(userCreateDTO.getEmail())
+				.password(userCreateDTO.getPassword())
+				.phoneNumber(userCreateDTO.getPhoneNumber())
+				.name(userCreateDTO.getName())
 				.build();
 	}
 	

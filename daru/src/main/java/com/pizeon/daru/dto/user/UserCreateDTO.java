@@ -1,4 +1,4 @@
-package com.pizeon.daru.dto;
+package com.pizeon.daru.dto.user;
 
 import com.pizeon.daru.domain.User;
 
@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserDTO {
+public class UserCreateDTO {
 	
 	@Email
 	@NotEmpty
@@ -33,8 +33,8 @@ public class UserDTO {
 	@Pattern(regexp = "/^\\S+$/")
 	private String name;
 	
-	public static UserDTO fromEntity(User user) {
-		return new UserDTO(user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.getName());
+	public static UserCreateDTO fromEntity(User user) {
+		return new UserCreateDTO(user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.getName());
 	}
 
 }

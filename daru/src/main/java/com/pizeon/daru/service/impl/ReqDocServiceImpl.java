@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.pizeon.daru.domain.Post;
-import com.pizeon.daru.dto.reqDocInfo.ReqDocInfoListDTO;
+import com.pizeon.daru.dto.reqDocInfo.ReqDocInfoListResDTO;
 import com.pizeon.daru.repository.PostRepository;
 import com.pizeon.daru.repository.ReqDocInfoRepository;
 import com.pizeon.daru.service.ReqDocService;
@@ -20,11 +20,11 @@ public class ReqDocServiceImpl implements ReqDocService {
 	private final ReqDocInfoRepository reqDocInfoRepository;
 
 	@Override
-	public List<ReqDocInfoListDTO> infoList(Long postId) throws Exception {
+	public List<ReqDocInfoListResDTO> infoList(Long postId) throws Exception {
 		Post post = postRepository.findById(postId).get();
 		
 		return reqDocInfoRepository.findByPost(post).stream()
-				.map(reqDocInfo -> ReqDocInfoListDTO.fromEntity(reqDocInfo))
+				.map(reqDocInfo -> ReqDocInfoListResDTO.fromEntity(reqDocInfo))
 				.toList();
 	}
 

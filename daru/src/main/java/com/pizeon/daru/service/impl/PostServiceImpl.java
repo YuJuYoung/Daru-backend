@@ -15,10 +15,10 @@ import com.pizeon.daru.domain.User;
 import com.pizeon.daru.dto.cmmn.Criteria;
 import com.pizeon.daru.dto.cmmn.PageDTO;
 import com.pizeon.daru.dto.post.PostCreateDTO;
-import com.pizeon.daru.dto.post.PostDetailDTO;
-import com.pizeon.daru.dto.post.list.MyPostListDTO;
-import com.pizeon.daru.dto.post.list.PostListDTO;
-import com.pizeon.daru.dto.post.list.SubPostListDTO;
+import com.pizeon.daru.dto.post.PostDetailResDTO;
+import com.pizeon.daru.dto.post.list.MyPostListReqDTO;
+import com.pizeon.daru.dto.post.list.PostListResDTO;
+import com.pizeon.daru.dto.post.list.SubPostListReqDTO;
 import com.pizeon.daru.dto.reqDocInfo.ReqDocInfoCreateDTO;
 import com.pizeon.daru.repository.PostRepository;
 import com.pizeon.daru.repository.ReqDocInfoRepository;
@@ -38,24 +38,24 @@ public class PostServiceImpl implements PostService {
 	private final SubDocRepository subDocRepository;
 			
 	@Override
-	public Optional<PageDTO<PostListDTO>> list(Criteria criteria) throws Exception {
+	public Optional<PageDTO<PostListResDTO>> list(Criteria criteria) throws Exception {
 		Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
 		Page<Post> page =
 				postRepository.findByTitleContainsOrderByCreatedAtDesc(criteria.getKeyword(), pageable);
 		
 		return Optional.of(
-				PageDTO.<PostListDTO>builder()
+				PageDTO.<PostListResDTO>builder()
 				.totalPage(page.getTotalPages())
 				.pageNum(page.getPageable().getPageNumber() + 1)
 				.keyword(criteria.getKeyword())
-				.content(page.get().map(post -> PostListDTO.fromEntity(post)).toList())
+				.content(page.get().map(post -> PostListResDTO.fromEntity(post)).toList())
 				.build());
 	}
 	
 	@Override
-	public Optional<PageDTO<PostListDTO>> myList(MyPostListDTO myPostListDTO) throws Exception {
-		Long userId = myPostListDTO.getUserId();
-		Criteria criteria = myPostListDTO.getCriteria();
+	public Optional<PageDTO<PostListResDTO>> myList(MyPostListReqDTO myPostListReqDTO) throws Exception {
+		Long userId = myPostListReqDTO.getUserId();
+		Criteria criteria = myPostListReqDTO.getCriteria();
 		
 		User writer = userRepository.findById(userId).get();
 		Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
@@ -63,36 +63,36 @@ public class PostServiceImpl implements PostService {
 				postRepository.findByTitleContainsAndWriterOrderByCreatedAtDesc(criteria.getKeyword(), writer, pageable);
 		
 		return Optional.of(
-				PageDTO.<PostListDTO>builder()
+				PageDTO.<PostListResDTO>builder()
 				.totalPage(page.getTotalPages())
 				.pageNum(page.getPageable().getPageNumber() + 1)
-				.content(page.get().map(post -> PostListDTO.fromEntity(post)).toList())
+				.content(page.get().map(post -> PostListResDTO.fromEntity(post)).toList())
 				.build());
 	}
 	
 	@Override
-	public Optional<PageDTO<PostListDTO>> submittedList(SubPostListDTO subPostListDTO) {
-		Long userId = subPostListDTO.getUserId();
-		Criteria criteria = subPostListDTO.getCriteria();
+	public Optional<PageDTO<PostListResDTO>> submittedList(SubPostListReqDTO subPostListReqDTO) {
+		Long userId = subPostListReqDTO.getUserId();
+		Criteria criteria = subPostListReqDTO.getCriteria();
 		
 		User writer = userRepository.findById(userId).get();
 		Pageable pageable = PageRequest.of(criteria.getPageNum() - 1, criteria.getRowCnt());
 		Page<SubDoc> page = subDocRepository.findByUser(writer, pageable);
 		
 		return Optional.of(
-				PageDTO.<PostListDTO>builder()
+				PageDTO.<PostListResDTO>builder()
 				.totalPage(page.getTotalPages())
 				.pageNum(page.getPageable().getPageNumber() + 1)
-				.content(page.get().map(subDoc -> PostListDTO.fromEntity(subDoc.getPost())).toList())
+				.content(page.get().map(subDoc -> PostListResDTO.fromEntity(subDoc.getPost())).toList())
 				.build());
 	}
 	
 	@Override
-	public Optional<PostDetailDTO> detail(Long postId) {
+	public Optional<PostDetailResDTO> detail(Long postId) {
 		Optional<Post> post = postRepository.findById(postId);
 		
 		if (!post.isEmpty()) {
-			return Optional.of(PostDetailDTO.fromEntity(post.get()));
+			return Optional.of(PostDetailResDTO.fromEntity(post.get()));
 		}
 		return Optional.empty();
 	}

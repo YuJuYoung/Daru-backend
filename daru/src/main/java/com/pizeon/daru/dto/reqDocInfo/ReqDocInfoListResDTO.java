@@ -10,14 +10,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder(access = AccessLevel.PRIVATE)
-public class ReqDocInfoListDTO {
+public class ReqDocInfoListResDTO {
 	
 	private Long id;
 	private String explainTxt;
 	private Integer minLen;
 	private Integer maxLen;
 	
-	public static ReqDocInfoListDTO fromEntity(ReqDocInfo reqDocInfo) {
+	public static ReqDocInfoListResDTO fromEntity(ReqDocInfo reqDocInfo) {
 		return builder()
 				.id(reqDocInfo.getId())
 				.explainTxt(reqDocInfo.getExplainTxt())

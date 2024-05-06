@@ -16,7 +16,7 @@ import lombok.Setter;
 @Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PostDetailDTO {
+public class PostDetailResDTO {
 	
 	private String title;
 	private String description;
@@ -25,7 +25,7 @@ public class PostDetailDTO {
 	private Long writerId;
 	private String writerName;
 	
-	public static PostDetailDTO fromEntity(Post post) {
+	public static PostDetailResDTO fromEntity(Post post) {
 		return builder()
 				.title(post.getTitle())
 				.description(post.getDescription())

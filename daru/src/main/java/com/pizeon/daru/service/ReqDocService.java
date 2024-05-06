@@ -2,10 +2,10 @@ package com.pizeon.daru.service;
 
 import java.util.List;
 
-import com.pizeon.daru.dto.reqDocInfo.ReqDocInfoListDTO;
+import com.pizeon.daru.dto.reqDocInfo.ReqDocInfoListResDTO;
 
 public interface ReqDocService {
 	
-	public List<ReqDocInfoListDTO> infoList(Long postId) throws Exception;
+	public List<ReqDocInfoListResDTO> infoList(Long postId) throws Exception;
 
 }
