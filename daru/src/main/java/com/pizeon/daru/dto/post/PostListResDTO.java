@@ -1,4 +1,4 @@
-package com.pizeon.daru.dto.post.list;
+package com.pizeon.daru.dto.post;
 
 import java.time.format.DateTimeFormatter;
 
