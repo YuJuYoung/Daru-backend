@@ -6,9 +6,9 @@ import com.pizeon.daru.dto.cmmn.Criteria;
 import com.pizeon.daru.dto.cmmn.PageDTO;
 import com.pizeon.daru.dto.post.PostCreateDTO;
 import com.pizeon.daru.dto.post.PostDetailResDTO;
-import com.pizeon.daru.dto.post.PostListResDTO;
-import com.pizeon.daru.dto.post.myPost.MyPostListReqDTO;
-import com.pizeon.daru.dto.post.subPost.SubPostListReqDTO;
+import com.pizeon.daru.dto.post.list.PostListResDTO;
+import com.pizeon.daru.dto.post.list.myPost.MyPostListReqDTO;
+import com.pizeon.daru.dto.post.list.subPost.SubPostListReqDTO;
 
 public interface PostService {
 	

@@ -1,4 +1,4 @@
-package com.pizeon.daru.dto.post.subPost;
+package com.pizeon.daru.dto.post.list.myPost;
 
 import com.pizeon.daru.dto.cmmn.Criteria;
 
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SubPostListReqDTO {
+public class MyPostListReqDTO {
 	
 	private Long userId;
 	private Criteria criteria;
