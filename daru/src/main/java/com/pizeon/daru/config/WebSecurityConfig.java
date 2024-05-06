@@ -19,12 +19,12 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class WebSecurityConfig {
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    private PasswordEncoder passwordEncoder() {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
     
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    private SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     	return http
     			.securityMatcher("/api/**")
     			.cors((cors) -> cors.configurationSource(configurationSource()))

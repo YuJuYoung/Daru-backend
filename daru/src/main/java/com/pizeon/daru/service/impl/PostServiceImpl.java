@@ -89,7 +89,12 @@ public class PostServiceImpl implements PostService {
 	
 	@Override
 	public Optional<PostDetailDTO> detail(Long postId) {
-		return Optional.of(PostDetailDTO.fromEntity(postRepository.findById(postId).get()));
+		Optional<Post> post = postRepository.findById(postId);
+		
+		if (!post.isEmpty()) {
+			return Optional.of(PostDetailDTO.fromEntity(post.get()));
+		}
+		return Optional.empty();
 	}
 
 	@Override

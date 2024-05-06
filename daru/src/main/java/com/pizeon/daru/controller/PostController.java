@@ -101,7 +101,7 @@ public class PostController {
 		try {
 			Optional<PostDetailDTO> postDetailDTO = postService.detail(postId);
 			
-			if (postDetailDTO != null) {
+			if (!postDetailDTO.isEmpty()) {
 				return ResultDTO.<PostDetailDTO>builder()
 						.success(true)
 						.data(postDetailDTO.get())
