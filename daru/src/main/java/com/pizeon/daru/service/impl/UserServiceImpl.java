@@ -1,5 +1,7 @@
 package com.pizeon.daru.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +20,11 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
-	public UserCreateDTO create(UserCreateDTO userCreateDTO) throws Exception {
+	public Optional<UserCreateDTO> create(UserCreateDTO userCreateDTO) throws Exception {
 		String encodedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
 		userCreateDTO.setPassword(encodedPassword);
 		User user = userRepository.save(User.fromDTO(userCreateDTO));
-		return UserCreateDTO.fromEntity(user);
+		return Optional.of(UserCreateDTO.fromEntity(user));
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class UserController {
 						.build();
 			}
 			
-			if (userService.create(userCreateDTO) != null) {
+			if (!userService.create(userCreateDTO).isEmpty()) {
 				return ResultDTO.builder()
 						.success(true)
 						.build();
